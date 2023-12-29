@@ -77,14 +77,14 @@ p.title
     border-width: var(--points-border);
 }
 .title{
-    font-size: x-large;
+    font-size: large;
     font-family: 'Courier New', Courier, monospace;
     color: black;
     font-weight: bold;
     
 }
 .points{
-    font-size: x-large;
+    font-size: large;
     font-family: 'Courier New', Courier, monospace;
     color: black;
     font-weight: bold;
@@ -130,13 +130,13 @@ input[type=number]
     text-align: center;
 }
 #headerText{
-    font-size: 2.8em;
+    font-size: 2.2em;
     font-family: 'Courier New', Courier, monospace;
     color: black;
     font-weight: bold;
 }
 @media (orientation: portrait) {
     #headerText{
-        font-size: xxx-large;
+        font-size: xx-large;
     }
 }
