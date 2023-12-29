@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infinite Tic Tac Toe</title>
+</head>
+<style>
+    :root{
+        --grid-width: 31.5vw;
+        --grid-border-width: 0.5vw;
+        --grid-gap: var(--grid-border-width);
+        --points-border: var(--grid-border-width);
+        --grid-cell-size: calc( (var(--grid-width) - 2*var(--grid-gap) )/3 );
+        --menu-top: 50%;
+        --header-width: calc(60vw - 2*var(--grid-cell-size))
+        }
+    @media (orientation: portrait) {
+        :root{
+            --grid-width: 70vw;
+            --menu-top: 20%;
+        }
+    }
+    #container{
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        justify-content: space-around;
+    }
+    #grid{
+        display: grid;
+        border-style: solid;
+        background-color: black;
+
+        width: var(--grid-width);
+        border-width: var(--grid-border-width);
+        grid-gap: var(--grid-gap) var(--grid-gap);
+        grid-template-rows: repeat(3, var(--grid-cell-size));
+        grid-template-columns: repeat(3, var(--grid-cell-size));
+    }
+    #canvas{
+        width: var(--grid-width);
+        height: var(--grid-width);
+        position: absolute;
+    }
+    p.title
+    {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .grid-item{
+        aspect-ratio: 1;
+        background-color: white;
+        transition: background-color 0.25s ease;
+        text-decoration: none;        
+        text-align: center;
+        color: inherit;
+        display: flex;
+        font-size: xx-large;
+        justify-content: center;
+        align-items: center;
+    }
+    .button{
+        margin: 5px 5px;
+    }
+    .break {
+        flex-basis: 100%;
+        height: 0;
+        }
+    .point-box{
+        width: var(--grid-cell-size);
+        height: auto;
+        display: grid;
+        grid-template-rows: 50% 50%;
+        font-size: large;
+        text-align: center;
+        margin-bottom: 10px;
+        border: solid;
+        border-width: var(--points-border);
+    }
+    .background{
+        background-color: rgba(0, 0, 139, 0.7);
+        border-bottom: solid;
+        border-width: var(--points-border);
+    }
+    .title{
+        font-size: x-large;
+        font-family: 'Courier New', Courier, monospace;
+        color: black;
+        font-weight: bold;
+        
+    }
+    .points{
+        font-size: x-large;
+        font-family: 'Courier New', Courier, monospace;
+        color: black;
+        font-weight: bold;
+        margin-left: 30px;
+        margin-right: 30px;
+        text-align: right;
+    }
+    .centering
+    {
+        display: flex;
+        justify-content: center;
+    }
+    #menu
+    {
+        display: flex;
+        flex-direction: column;
+        border: solid;
+        border-width: var(--grid-border-width);
+        margin: 15px 15px;
+        font-family: 'Courier New', Courier, monospace;
+        font-weight: bold;
+        padding: 10px;
+        background-color: white;
+        position: absolute;
+        top: var(--menu-top);
+        left: 50%;
+        transform: translate(-50%, -50%);
+        visibility: hidden;
+    }
+    input[type=number]
+    {
+        margin: 8px 0;
+        font-family: 'Courier New', Courier, monospace;
+        font-weight: bold;
+    }
+    .headerBox
+    {
+        display: flex;
+        justify-items: center;
+        align-content: center;
+        justify-content: center;
+        width: var(--header-width);
+        text-align: center;
+    }
+    #headerText{
+        font-size: 2.8em;
+        font-family: 'Courier New', Courier, monospace;
+        color: black;
+        font-weight: bold;
+    }
+    @media (orientation: portrait) {
+        #headerText{
+            font-size: xxx-large;
+        }
+    }
+</style>
+<body>
+    <div id="menu">
+        <label for="depthMenu">Search depth</label>
+        <input type="number" id="depthMenu" min="1" onchange="board.setDepth()">
+
+        <label for="pointsMenu">Points to win</label>
+        <input type="number" id="pointsMenu" min="1" onchange="board.setPointsMax()">
+    </div>       
+    <div id="container">
+        <div class="point-box">
+            <div class="background">
+                <p class="title">Player 1</p>
+            </div>
+            <p class="points" id="p0">0</p>
+        </div>
+        <div class="headerBox">
+            <p id="headerText">headerText placeholder</p>
+        </div>
+        <div class="point-box">
+            <div class="background">
+                <p class="title">Player 2</p>
+            </div>
+            <p class="points" id="p1">0</p>
+        </div>
+        <div class="break"></div>
+        <div id="grid" >
+            <a class="grid-item" href="#" onclick="board.move(0, true)" draggable="false"></a>
+            <a class="grid-item" href="#" onclick="board.move(1, true)" draggable="false"></a>
+            <a class="grid-item" href="#" onclick="board.move(2, true)" draggable="false"></a>
+            <a class="grid-item" href="#" onclick="board.move(3, true)" draggable="false"></a>
+            <a class="grid-item" href="#" onclick="board.move(4, true)" draggable="false"></a>
+            <a class="grid-item" href="#" onclick="board.move(5, true)" draggable="false"></a>
+            <a class="grid-item" href="#" onclick="board.move(6, true)" draggable="false"></a>
+            <a class="grid-item" href="#" onclick="board.move(7, true)" draggable="false"></a>
+            <a class="grid-item" href="#" onclick="board.move(8, true)" draggable="false"></a>
+        </div>
+    </div>
+    <div class="centering">
+        <input type="button" value="Player goes first" class="button" onclick="board.init(0)">
+        <input type="button" value="Engine goes first" class="button" onclick="board.init(1)">
+        <input type="button" value="Settings" class="button" onclick="board.getMenu()">
+    </div>
+
+</body>
+<script>
+    class Board{
+        points = []; depthMenu; pointsMenu; menuVisible = false; menuHandler;
+        endFlag = false;
+        players = [() => this.createX(), () => this.createO()];
+        tiles = [];
+        tab = [[-1, -1, -1], [-1, -1, -1], [-1, -1, -1]]
+        toPlay = 0;
+        MAX_POINTS = 3;
+        DEPTH = 7;
+        constructor()
+        {
+            this.tiles = document.getElementsByClassName('grid-item');
+            this.menuHandler = document.getElementById('menu');
+            this.menuHandler.style.top = `${this.tiles}`;
+            this.depthMenu = document.getElementById('depthMenu');
+            this.pointsMenu = document.getElementById('pointsMenu');
+            this.pointsMenu.value = this.MAX_POINTS;
+            this.depthMenu.value = this.DEPTH;
+            this.points.push(document.getElementById('p0'));
+            this.points.push(document.getElementById('p1'));
+            document.getElementById('headerText').innerText = `First to score ${this.MAX_POINTS} points wins`;
+        }
+        setDepth()
+        {
+            this.DEPTH = parseInt(this.depthMenu.value);
+        }
+        setPointsMax()
+        {
+            this.MAX_POINTS = parseInt(this.pointsMenu.value);
+            document.getElementById('headerText').innerText = `First player to score ${this.MAX_POINTS} points wins`;
+        }
+        getMenu()
+        {
+            this.menuVisible = !this.menuVisible;
+            if(this.menuVisible)
+                this.menuHandler.style.visibility = 'visible' 
+                else
+                this.menuHandler.style.visibility = 'hidden' 
+
+        }
+        init(starting)
+        {
+            document.getElementById('headerText').innerText = `First to score ${this.MAX_POINTS} points wins`;
+            this.endFlag = false;
+            this.points[0].innerText = 0;
+            this.points[1].innerText = 0;
+            this.tab = [[-1, -1, -1], [-1, -1, -1], [-1, -1, -1]];
+            this.toPlay = 0;
+
+            for(let tile of this.tiles)
+                tile.innerText = '';
+
+            if(starting == 1)
+            {
+                let next = this.findBest(0);
+                this.move(next, false);
+            }
+        }
+
+        drawLine(b, e, stroke = 'red', width = 10) {
+            let begin = [ (b % 3 + 0.5) * 200, (Math.floor(b / 3) + 0.5 ) * 200];
+            let end = [(e % 3 + 0.5) * 200, (Math.floor(e / 3) + 0.5 ) * 200];
+
+            if (stroke) {
+                this.context.strokeStyle = stroke;
+            }
+
+            if (width) {
+                this.context.lineWidth = width;
+            }
+            
+            this.context.lineCap = 'round';
+            this.context.beginPath();
+            this.context.moveTo(...begin);
+            this.context.lineTo(...end);
+            this.context.stroke();
+            this.canvas.style.display = '';
+            setTimeout(() => {
+                this.context.clearRect(0, 0, canvas.width, canvas.height);
+                this.canvas.style.display = 'none';
+            },50);
+        }
+
+        move(pos, playNext)
+        {   
+            if(this.endFlag) {
+                this.init(0); return;
+            };
+            let row = Math.floor(pos / 3);
+            let col = pos % 3;
+            
+            if(this.tab[row][col] != -1) return;
+
+            this.tab[row][col] = this.toPlay;
+            this.tiles[pos].appendChild(this.players[this.toPlay]()); 
+            this.toPlay += 1;
+            this.toPlay %= 2;
+
+            let w, wait = 0;
+            if((w = this.winner()) != -1)
+            {   
+                for(let tile of w.tiles)
+                    this.tiles[tile].style.backgroundColor = 'red';
+                
+                window.setTimeout(() => {
+                    this.clearTile(...w.tiles)
+                    for(let tile of w.tiles)
+                        this.tiles[tile].style.backgroundColor = 'white';
+                }, 250)
+                wait = 250;
+                this.points[w.winner].innerText = `${parseInt(this.points[w.winner].innerText)+w.points}`;
+                
+                if(this.points[w.winner].innerText >= this.MAX_POINTS) 
+                {
+                    this.endFlag = true;
+                    document.getElementById('headerText').innerText = `Player ${w.winner+1} wins!`;
+                }                
+            }
+
+            setTimeout(() => {if(playNext)
+            {
+                let next = this.findBest(this.toPlay);
+                //console.log(next)
+                if(next == -1) return;
+                this.move(next, false)
+            }}, wait);
+        }
+    
+        createO()
+        {
+            let o = document.createElement('img');
+            o.src = './img/o.png'
+            o.style.width = `${this.tiles[0].getBoundingClientRect().width * 0.5}px`
+            return o;
+        }
+
+        createX()
+        {
+            let x = document.createElement('img');
+            x.src = './img/x.png'
+            x.style.width = `${this.tiles[0].getBoundingClientRect().width * 0.5}px`
+            return x;
+        }
+
+        clearTile(...positions)
+        {
+            for(let pos of positions)
+            {
+                let row = Math.floor(pos / 3);
+                let col = pos % 3;
+                this.tab[row][col] = -1;
+                this.tiles[pos].innerHTML = '';
+            }
+        }
+
+        winner()
+        {
+            let output = {winner: -1, points: 0, tiles: []}
+
+            if(this.tab[0][0] == 1 && this.tab[1][1] == 1 && this.tab[2][2] == 1) 
+            {
+                output.winner = 1;
+                output.points ++;
+                output.tiles.push(0,4,8);
+            }
+            if(this.tab[0][0] == 0 && this.tab[1][1] == 0 && this.tab[2][2] == 0) 
+            {
+                output.winner = 0;
+                output.points ++;
+                output.tiles.push(0,4,8);
+            }
+                
+            if(this.tab[0][2] == 1 && this.tab[1][1] == 1 && this.tab[2][0] == 1) 
+            {
+                output.winner = 1;
+                output.points ++;
+                output.tiles.push(2,4,6);
+            }
+            if(this.tab[0][2] == 0 && this.tab[1][1] == 0 && this.tab[2][0] == 0) 
+            {
+                output.winner = 0;
+                output.points ++;
+                output.tiles.push(2,4,6);
+            }
+
+
+            for(let k = 0; k < 3; k++)
+            {
+                // trojka w wierszu
+                if(this.tab[k][0] == 1 && this.tab[k][1] == 1 && this.tab[k][2] == 1) 
+                {
+                    output.winner = 1;
+                    output.points ++;
+                    output.tiles.push(3*k,3*k+1,3*k+2);
+                }
+                if(this.tab[k][0] == 0 && this.tab[k][1] == 0 && this.tab[k][2] == 0) 
+                {
+                    output.winner = 0;
+                    output.points ++;
+                    output.tiles.push(3*k,3*k+1,3*k+2);
+                }
+                // trojka w kolumnie
+                if(this.tab[0][k] == 1 && this.tab[1][k] == 1 && this.tab[2][k] == 1) 
+                {
+                    output.winner = 1;
+                    output.points ++;
+                    output.tiles.push(k,k+3,k+6);
+                }
+                
+                if(this.tab[0][k] == 0 && this.tab[1][k] == 0 && this.tab[2][k] == 0) 
+                {
+                    output.winner = 0;
+                    output.points ++;
+                    output.tiles.push(k,k+3,k+6);
+                }
+            }
+
+            if(output.winner == -1) return -1;
+            else return output;
+        }
+
+        findBest( player )
+        {
+            let bestMove = -1, bestEval = -Infinity;
+
+            for(let i=0; i<3; i++)
+                for(let j=0; j<3; j++)
+                {
+                    if(this.tab[i][j] == -1) // legalny ruch
+                    {
+                        this.tab[i][j] = player;
+                        let evaluation = this.eval( false, (player + 1) % 2, 1, {points: [parseInt(this.points[0].innerText), this.points[1].innerText]});
+                        this.tab[i][j] = -1;
+
+                        if(evaluation > bestEval)
+                        {
+                            bestEval = evaluation;
+                            bestMove = 3 * i + j;
+                        }
+                    }
+                }
+            return bestMove;
+        }
+
+        anyMovesLeft()
+        {
+            for(let i=0; i<3; i++)
+                for(let j=0; j<3; j++)
+                    if(this.tab[i][j] == -1) return true;
+            return false;
+        }
+
+        eval(onMove, player, depth, state)
+        {
+            let win = this.winner()
+            if( win != -1 )
+            {
+                state.points[win.winner] += win.points;
+                if(state.points[win.winner] >= this.MAX_POINTS)
+                {
+                    if(onMove) return -100 + depth;
+                    else return 100 - depth;
+                }
+                for(let tile of win.tiles)
+                {
+                    let row = Math.floor(tile/3);
+                    let col = tile % 3;
+                    this.tab[row][col] = -1;
+                }
+            }
+
+            if(depth >= this.DEPTH)
+            {
+                if(win != -1)
+                {
+                    state.points[win.winner] -= win.points;
+                    for(let tile of win.tiles)
+                    {
+                        let row = Math.floor(tile/3);
+                        let col = tile % 3;
+                        this.tab[row][col] = win.winner;
+                    }
+                }
+                if(onMove)
+                    return state.points[player] - state.points[(player+1)%2];
+                else
+                    return state.points[(player+1)%2] - state.points[player];
+            }
+
+            if(!this.anyMovesLeft()) 
+            {
+                if(onMove)
+                    return state.points[player] - state.points[(player+1)%2];
+                else
+                    return state.points[(player+1)%2] - state.points[player];
+            }
+
+            let val;
+
+            if(onMove)
+            {
+                val = -Infinity;
+                for(let i=0; i<3; i++)
+                    for(let j=0; j<3; j++)
+                    {
+                        if(this.tab[i][j] == -1)
+                        {
+                            this.tab[i][j] = player;
+                            let newVal = this.eval(false, (player+1)%2, depth + 1, state);
+                            this.tab[i][j] = -1;
+                            val = Math.max(newVal, val);
+                        }
+                    }                
+            }
+            else
+            {
+                val = +Infinity;
+                for(let i=0; i<3; i++)
+                    for(let j=0; j<3; j++)
+                    {
+                        if(this.tab[i][j] == -1)
+                        {
+                            this.tab[i][j] = player;
+                            let newVal = this.eval(true, (player+1) % 2, depth + 1, state);
+                            this.tab[i][j] = -1;
+                            val = Math.min(newVal, val);
+                        }
+                    }            
+            }
+
+            if( win != -1 )
+            {
+                state.points[win.winner] -= win.points;
+                for(let tile of win.tiles)
+                {
+                    let row = Math.floor(tile/3);
+                    let col = tile % 3;
+                    this.tab[row][col] = win.winner;
+                }
+            }
+            return val;
+        }
+    }
+
+    let board = new Board();
+</script>
+</html>
