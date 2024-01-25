@@ -1,6 +1,6 @@
-# Infinite Tic Tac Toe
+# Infinite TicTacToe
 
-Welcome to Infinite Tic Tac Toe – Tic Tac Toe taken to the next level! 
+Welcome to Infinite TicTacToe – Tic Tac Toe taken to the next level! 
 Players engage in a battle aiming to connect three pieces as in traditional Tic Tac Toe. However, there's a twist! 
 After each successful connection, pieces disappear and the game continues, creating a complex and dynamic playing experience.
 The game is hosted on [my webpage](https://skrzypczakm.sprytnykartel.pl/infinite-tic-tac-toe/).
