@@ -229,7 +229,7 @@ class Board{
                 if(this.tab[i][j] == -1) // legalny ruch
                 {
                     this.tab[i][j] = player;
-                    let evaluation = this.eval( false, (player + 1) % 2, 1, {points: [parseInt(this.points[0].innerText), this.points[1].innerText]});
+                    let evaluation = this.eval( false, (player + 1) % 2, 1, {points: [parseInt(this.points[0].innerText), parseInt(this.points[1].innerText)]});
                     this.tab[i][j] = -1;
 
                     if(evaluation > bestEval)
