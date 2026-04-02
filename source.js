@@ -258,6 +258,7 @@ class Board{
             state.points[win.winner] += win.points;
             if(state.points[win.winner] >= this.MAX_POINTS)
             {
+                state.points[win.winner] -= win.points;
                 if(onMove) return -100 + depth;
                 else return 100 - depth;
             }
@@ -271,6 +272,12 @@ class Board{
 
         if(depth >= this.DEPTH)
         {
+            let result;
+            if(onMove)
+                result = state.points[player] - state.points[(player+1)%2];
+            else
+                result = state.points[(player+1)%2] - state.points[player];
+
             if(win != -1)
             {
                 state.points[win.winner] -= win.points;
@@ -281,10 +288,7 @@ class Board{
                     this.tab[row][col] = win.winner;
                 }
             }
-            if(onMove)
-                return state.points[player] - state.points[(player+1)%2];
-            else
-                return state.points[(player+1)%2] - state.points[player];
+            return result;
         }
 
         if(!this.anyMovesLeft()) 
