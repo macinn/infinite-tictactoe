@@ -6,7 +6,7 @@ class Board{
     tab = [[-1, -1, -1], [-1, -1, -1], [-1, -1, -1]]
     toPlay = 0;
     MAX_POINTS = 3;
-    DEPTH = 7;
+    DEPTH = 10;
     constructor()
     {
         this.tiles = document.getElementsByClassName('grid-item');
@@ -221,6 +221,7 @@ class Board{
 
     findBest( player )
     {
+        this.cache = new Map();
         let bestMove = -1, bestEval = -Infinity;
 
         for(let i=0; i<3; i++)
@@ -252,14 +253,25 @@ class Board{
 
     eval(onMove, player, depth, state)
     {
+        let key = this.tab[0].join('') + this.tab[1].join('') + this.tab[2].join('') + state.points[0] + ',' + state.points[1] + onMove + player + depth;
+        if (this.cache.has(key)) return this.cache.get(key);
+
         let win = this.winner()
         if( win != -1 )
         {
             state.points[win.winner] += win.points;
             if(state.points[win.winner] >= this.MAX_POINTS)
             {
-                if(onMove) return -100 + depth;
-                else return 100 - depth;
+                state.points[win.winner] -= win.points;
+                for(let tile of win.tiles)
+                {
+                    let row = Math.floor(tile/3);
+                    let col = tile % 3;
+                    this.tab[row][col] = win.winner;
+                }
+                let res = onMove ? -100 + depth : 100 - depth;
+                this.cache.set(key, res);
+                return res;
             }
             for(let tile of win.tiles)
             {
@@ -269,6 +281,7 @@ class Board{
             }
         }
 
+        let val;
         if(depth >= this.DEPTH)
         {
             if(win != -1)
@@ -282,20 +295,25 @@ class Board{
                 }
             }
             if(onMove)
-                return state.points[player] - state.points[(player+1)%2];
+                val = state.points[player] - state.points[(player+1)%2];
             else
-                return state.points[(player+1)%2] - state.points[player];
+                val = state.points[(player+1)%2] - state.points[player];
+
+            this.cache.set(key, val);
+            return val;
         }
 
         if(!this.anyMovesLeft()) 
         {
             if(onMove)
-                return state.points[player] - state.points[(player+1)%2];
+                val = state.points[player] - state.points[(player+1)%2];
             else
-                return state.points[(player+1)%2] - state.points[player];
+                val = state.points[(player+1)%2] - state.points[player];
+
+            this.cache.set(key, val);
+            return val;
         }
 
-        let val;
 
         if(onMove)
         {
@@ -338,6 +356,7 @@ class Board{
                 this.tab[row][col] = win.winner;
             }
         }
+        this.cache.set(key, val);
         return val;
     }
 }
